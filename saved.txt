@@ -1,0 +1,14 @@
+[5/2/1]
+ Nama Regex: dwadwdwd
+ Regex: wdijwdiwdj
+====================
+
+[5/2/1]
+aaa
+aaa
+====================
+
+[5/2/1]
+aaawdnwjdnw
+aaawdndjwnd
+====================
