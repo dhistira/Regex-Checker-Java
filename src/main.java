@@ -1,6 +1,7 @@
 import java.awt.event.ActionListener;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -28,6 +29,7 @@ public class main {
 	private Text textAreaInput;
 	private Label lblYourResult;
 	private Text labelSaveRegex;
+	private Text result;
 
 	/**
 	 * Launch the application.
@@ -63,6 +65,7 @@ public class main {
 
 	protected void createContents() {
 		final String dir = System.getProperty("user.dir");
+		String delimiter = " ";
 		
 		shell = new Shell();
 		shell.setSize(840, 600);
@@ -79,11 +82,11 @@ public class main {
 		browser_1.setUrl(log);
 		
 		regexInput = new Text(shell, SWT.BORDER);
-		regexInput.setBounds(257, 10, 308, 38);
+		regexInput.setBounds(257, 10, 308, 70);
 		regexInput.setMessage("Put your regex here");
 		
 		textAreaInput = new Text(shell, SWT.BORDER);
-		textAreaInput.setBounds(257, 102, 308, 186);
+		textAreaInput.setBounds(257, 102, 308, 87);
 		textAreaInput.setMessage("Put your text here");
 		
 		lblYourResult = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -162,38 +165,33 @@ public class main {
 		btnSave.setBounds(729, 45, 85, 26);
 		btnSave.setText("SAVE");
 		
-		Button btnTestRegex = new Button(shell, SWT.PUSH);
-		btnTestRegex.setBounds(257, 54, 308, 26);
-		btnTestRegex.setText("TEST REGEX");
-		btnTestRegex.addListener(SWT.Selection, new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				// TODO Auto-generated method stub
-				String regexUser = regexInput.getText();
-				String textUser = textAreaInput.getText();
-				if(textUser.matches(regexUser)) {
-					System.out.println("true");
-				}else {
-					System.out.println("false");
-				}
-			}
-		});
+		result = new Text(shell, SWT.BORDER);
+		result.setBounds(257, 206, 308, 93);
+		result.setMessage("Your result will be displayed here");
+		
 		TimerTask autoUpdate = new TimerTask() {
 			public void run() {
 				Display.getDefault().syncExec(new Runnable() {
 					@Override
 					public void run() {
 						try {
-							// TODO Auto-generated method stub
-							String regexUser = regexInput.getText();
-							String textUser = textAreaInput.getText();
-							if(textUser.matches(regexUser)) {
-								System.out.println("true");
-							}else {
-								System.out.println("false");
-							}
+							String[] tempArray = textAreaInput.getText().split(delimiter);
+							String trueString = "";
+								try {
+									for (int i = 0; i < tempArray.length; i++) {
+										// TODO Auto-generated method stub
+										String regexUser = regexInput.getText();
+										if(tempArray[i].matches(regexUser)) {
+											trueString = trueString + " " + tempArray[i];
+										}else {
+										}
+									}
+									result.setText(trueString);
+								}catch(PatternSyntaxException e) {
+									result.setText("Error pattern");
+								}
 						}catch(SWTException e) {
-							System.out.println("error");
+							result.setText("Error");
 						}
 					}
 				});
