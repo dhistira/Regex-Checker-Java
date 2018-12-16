@@ -198,8 +198,8 @@ public class main {
 			}
 		};
 		Timer mytimer =  new Timer("Timer");
-		long delay = 1000L;
-		long period = 1000L;
+		long delay = 50L;
+		long period = 50L;
 		mytimer.schedule(autoUpdate, delay, period);
 
 	}
