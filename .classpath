@@ -2,5 +2,15 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="D:/Program/eclipse/workspace/org.eclipse.swt/swt.jar"/>
+	<classpathentry kind="lib" path="D:/Program/eclipse/Jxbrowser/lib/jxbrowser-win64-6.22.1.jar"/>
+	<classpathentry kind="lib" path="D:/Program/eclipse/Jxbrowser/license.jar"/>
+	<classpathentry kind="lib" path="D:/Program/eclipse/Jxbrowser/lib/jxbrowser-6.22.1.jar"/>
+	<classpathentry kind="lib" path="D:/Program/eclipse/Jxbrowser/lib/jxbrowser-linux64-6.22.1.jar"/>
+	<classpathentry kind="lib" path="D:/Program/eclipse/Jxbrowser/lib/jxbrowser-mac-6.22.1.jar"/>
+	<classpathentry kind="lib" path="D:/Program/eclipse/Jxbrowser/lib/jxbrowser-win32-6.22.1.jar"/>
+	<classpathentry kind="lib" path="D:/Program/eclipse/DJ Native Swing/DJNativeSwing.jar"/>
+	<classpathentry kind="lib" path="D:/Program/eclipse/DJ Native Swing/DJNativeSwing-SWT.jar"/>
+	<classpathentry kind="lib" path="D:/Program/eclipse/DJ Native Swing/DJNativeSwing-SWTDemo.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
