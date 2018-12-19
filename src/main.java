@@ -1,14 +1,10 @@
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.PatternSyntaxException;
@@ -27,27 +23,68 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-
-import java.awt.Dialog;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class main {
-
+	
+	//SWT Declaration
 	protected Shell shlRegexChecker;
-	private Text regexInput;
-	private Text textAreaInput;
-	private Label lblYourResult;
-	private Text labelSaveRegex;
-	private Text result;
+	private Text inputRegex, textInput, inputSaveRegex, resultInput;
+	private Browser displayHistory, Tab1, Tab2, Tab3;
+	private Label separator, lblDictionary, labelSaved, lblSource;
+	private TabFolder dictionary;
+	private Button btnSave;
+	private TabItem CharacterTab, PredefinedTab, BoundaryTab;
+	private MessageBox dialog, dialogGagal, dialogSukses;
+	
+	//ECLIPSE 
+	final String dir = System.getProperty("user.dir");
+	private String regexUser, trueString, delimiter = " ", tempSave;
+	private String[] tempArray;
+	
+	//UTIL
+	private Timer mytimer;
+	private long delay, period;
+	private TimerTask autoUpdate;
+	private static FileOutputStream output;
+	private DateTimeFormatter dtf;
+	private LocalDateTime now;
 
-	/**
-	 * Launch the application.
-	 * @param args
-	 */
+	
+	//CONSTRUCTOR
+	public main() {
+		
+		//CORE
+		shlRegexChecker = new Shell();
+		displayHistory = new Browser(shlRegexChecker, SWT.NONE);
+		inputRegex = new Text(shlRegexChecker, SWT.BORDER);
+		textInput = new Text(shlRegexChecker, SWT.BORDER);
+		separator = new Label(shlRegexChecker, SWT.SEPARATOR | SWT.HORIZONTAL);
+		resultInput = new Text(shlRegexChecker, SWT.BORDER);
+		mytimer =  new Timer("Timer");
+		
+		//SAVE REGEX
+		inputSaveRegex = new Text(shlRegexChecker, SWT.BORDER);
+		labelSaved = new Label(shlRegexChecker, SWT.NONE);
+		btnSave = new Button(shlRegexChecker, SWT.NONE);
+		dialogGagal = new MessageBox(shlRegexChecker, SWT.ICON_ERROR | SWT.OK);
+		dialogSukses = new MessageBox(shlRegexChecker, SWT.ICON_INFORMATION | SWT.OK);
+		
+		//DICTIONARY
+		dictionary = new TabFolder(shlRegexChecker, SWT.NONE);
+		new Label(dictionary, SWT.NONE);
+		lblDictionary = new Label(shlRegexChecker, SWT.NONE);
+		lblSource = new Label(shlRegexChecker, SWT.NONE);
+		
+		//TABBER
+		Tab1 = new Browser(dictionary, SWT.NONE);
+		CharacterTab = new TabItem(dictionary, SWT.H_SCROLL);
+		PredefinedTab = new TabItem(dictionary, SWT.H_SCROLL);
+		Tab2 = new Browser(dictionary, SWT.NONE);
+		BoundaryTab = new TabItem(dictionary, SWT.NONE);
+		Tab3 = new Browser(dictionary, SWT.NONE);
+		
+	}
+	
 	public static void main(String[] args) {
 		try {
 			main window = new main();
@@ -57,9 +94,6 @@ public class main {
 		}
 	}
 
-	/**
-	 * Open the window.
-	 */
 	public void open() {
 		Display display = Display.getDefault();
 		createContents();
@@ -72,101 +106,50 @@ public class main {
 		}
 	}
 
-	/**
-	 * Create contents of the window.
-	 */
-
 	protected void createContents() {
-		final String dir = System.getProperty("user.dir");
-		String delimiter = " ";
-		
-		shlRegexChecker = new Shell();
-		shlRegexChecker.setSize(766, 600);
+		shlRegexChecker.setSize(766, 610);
 		shlRegexChecker.setText("Regex Checker");
 		
-		Browser displayHistory = new Browser(shlRegexChecker, SWT.NONE);
-		displayHistory.setBounds(462, 79, 278, 467);
-		String history = dir+"/saved.txt";
-		displayHistory.setUrl(history);
-		
-		regexInput = new Text(shlRegexChecker, SWT.BORDER);
-		regexInput.setBounds(10, 10, 438, 70);
-		regexInput.setMessage("Put your regex here");
-		
-		textAreaInput = new Text(shlRegexChecker, SWT.BORDER);
-		textAreaInput.setBounds(10, 102, 438, 87);
-		textAreaInput.setMessage("Put your text here");
-		
-		lblYourResult = new Label(shlRegexChecker, SWT.SEPARATOR | SWT.HORIZONTAL);
-		lblYourResult.setText("Your Result");
-		lblYourResult.setBounds(10, 86, 438, 10);
+		//PENGECEKAN REGEX
+		inputRegex.setBounds(10, 10, 438, 70);
+		inputRegex.setMessage("Put your regex here");
+		textInput.setBounds(10, 102, 438, 87);
+		textInput.setMessage("Put your text here");
+		separator.setText("Your Result");
+		separator.setBounds(10, 86, 438, 10);
+		resultInput.setBounds(10, 207, 438, 93);
+		resultInput.setMessage("Your result will be displayed here");
 		
 		//DICTIONARY START
-		TabFolder dictionary = new TabFolder(shlRegexChecker, SWT.NONE);
 		dictionary.setBounds(10, 338, 438, 208);
-		
-		Label label = new Label(dictionary, SWT.NONE);
-		label.setText("New Label");
-		
-		TabItem CharacterTab = new TabItem(dictionary, SWT.H_SCROLL);
-		CharacterTab.setText("Character");
-		
-		Browser Tab1 = new Browser(dictionary, SWT.NONE);
-		CharacterTab.setControl(Tab1);
-		Tab1.setText(""
-				+ "<table>"
-				+ "<tr><td style='width:100px;' valign='top'><b>[abc]</b></td><td>matches <b>a</b> or <b>b</b>, or <b>c</b></td></tr>"
-				+ "<tr><td valign='top'><b>^[abc]</b></td><td>Negation, matches everything except <b>a</b> or <b>b</b>, or <b>c</b></td></tr>"
-				+ "<tr><td valign='top'><b>^[a-c]</b></td><td>Range, matches <b>a</b> or <b>b</b>, or <b>c</b></td></tr>"
-				+ "<tr><td valign='top'><b>[a-b[c-f]]</b></td><td>Union, matches <b>a</b>, <b>b</b>, <b>c</b>, <b>d</b>, <b>e</b>, <b>f</b></td></tr>"
-				+ "<tr><td valign='top'><b>[a-c&&[b-c]]</b></td><td>intersection, matches <b>b</b> or <b>c</b></td></tr>"
-				+ "<tr><td valign='top'><b>[a-c&&[^b-c]]</b></td><td>subtraction, matches <b>a</b></td></tr>"
-				+ "</table>");
-		
-		TabItem PredefinedTab = new TabItem(dictionary, SWT.H_SCROLL);
-		PredefinedTab.setText("Predefined");
-		
-		Browser Tab2 = new Browser(dictionary, SWT.NONE);
-		Tab2.setText("<table>"
-				+ "<tr><td style ='width:100px;' valign='top'><b>.</b></td><td>Any character.</td></tr>"
-				+ "<tr><td valign='top'><b>\\d</b></td><td>A digit [0-9]</td></tr>"
-				+ "<tr><td valign='top'><b>\\D</b></td><td>A non digit A non-digit: [^0-9]</td></tr>"
-				+ "<tr><td valign='top'><b>\\s</b></td><td>A whitespace character: [ \\t\\n\\x0B\\f\\r]</td></tr>"
-				+ "<tr><td valign='top'><b>\\S</b></td><td>A non-whitespace character: [^\\s]</td></tr>"
-				+ "<tr><td valign='top'><b>\\w</b></td><td>A word character: [a-zA-Z_0-9]</td></tr>"
-				+ "<tr><td valign='top'><b>\\W</b></td><td>A non-word character: [^\\w]</td></tr>"
-				+ "</table>");
-		PredefinedTab.setControl(Tab2);
-		
-		TabItem BoundaryTab = new TabItem(dictionary, SWT.NONE);
-		BoundaryTab.setText("Boundary");
-		
-		Browser Tab3 = new Browser(dictionary, SWT.NONE);
-		Tab3.setText("<table><tr><td style ='width:100px;' valign='top'><b>^</b></td><td>A beginning of a line.</td></tr>"
-				+ "<tr><td valign='top'><b>$</b></td><td>The end of life</td></tr>"
-				+ "<tr><td valign='top'><b>\\b</b></td><td>A word boundary</td></tr>"
-				+ "<tr><td valign='top'><b>\\B</b></td><td>A non-word boundary</td></tr>"
-				+ "<tr><td valign='top'><b>\\A</b></td><td>The beginning of input</td></tr>"
-				+ "<tr><td valign='top'><b>\\G</b></td><td>The end of previous match</td></tr>"
-				+ "<tr><td valign='top'><b>\\Z</b></td><td>The end of the input but for the final terminator, if any</td></tr>"
-				+ "<tr><td valign='top'><b>\\z</b></td><td>The end of the input.</td></tr>"
-				+ "</table>");
-		BoundaryTab.setControl(Tab3);
-		
-		Label lblDictionary = new Label(shlRegexChecker, SWT.NONE);
 		lblDictionary.setFont(SWTResourceManager.getFont("Segoe UI", 13, SWT.BOLD | SWT.ITALIC));
 		lblDictionary.setBounds(10, 306, 270, 48);
 		lblDictionary.setText("REGEX DICTIONARY");
 		
-		labelSaveRegex = new Text(shlRegexChecker, SWT.BORDER);
-		labelSaveRegex.setBounds(462, 10, 278, 31);
-		labelSaveRegex.setMessage("Put your regex name");
+		getDictionary getDictionary = new getDictionary();
+		CharacterTab.setText("Character");
+		CharacterTab.setControl(Tab1);
+		Tab1.setText(getDictionary.getDictionary(1));
+		PredefinedTab.setText("Predefined");
+		Tab2.setText(getDictionary.getDictionary(2));
+		PredefinedTab.setControl(Tab2);
+		BoundaryTab.setText("Boundary");
+		Tab3.setText(getDictionary.getDictionary(3));
+		BoundaryTab.setControl(Tab3);
 		
-		Label labelSaved = new Label(shlRegexChecker, SWT.NONE);
+		lblSource.setBounds(10, 550, 625, 21);
+		lblSource.setText("Dictionary Source: https://zeroturnaround.com/rebellabs/java-regular-expressions-cheat-sheet/");
+		
+		//SAVE REGEX START
+		inputSaveRegex.setBounds(462, 10, 278, 31);
+		inputSaveRegex.setMessage("Put your regex name");
 		labelSaved.setBounds(462, 52, 99, 21);
 		labelSaved.setText("SAVED REGEX");
-		
-		Button btnSave = new Button(shlRegexChecker, SWT.NONE);
+		displayHistory.setBounds(462, 79, 278, 467);
+		String history = dir+"/saved.txt";
+		displayHistory.setUrl(history);
+
+		//BUTON SAVE REGEX
 		btnSave.setBounds(655, 47, 85, 26);
 		btnSave.setText("SAVE");
 		btnSave.addListener(SWT.Selection, new Listener()
@@ -174,112 +157,95 @@ public class main {
 		    @Override
 		    public void handleEvent(Event event)
 		    {
-		    	if(labelSaveRegex.getText() != null && !labelSaveRegex.getText().isEmpty() && regexInput.getText() != null && !regexInput.getText().isEmpty()) {
-		    		String tempSave = "["+Calendar.DATE+"/"+Calendar.MONTH+"/"+Calendar.YEAR+"]"
-		    	+"\n Nama Regex: "+labelSaveRegex.getText()+"\n Regex: "+regexInput.getText()+"\n"
-		    		+"====================";
+		    	if(inputSaveRegex.getText().trim().length() == 0 || inputRegex.getText().trim().length() == 0) {
+		    		dialogGagal.setMessage("Nama Regex tidak Boleh Kosong");
+		    		dialogGagal.open();
+		    		displayHistory.setUrl(history);
+		    	}else {
+		    	tempSave = getText(inputSaveRegex.getText(),inputRegex.getText());
 		    		try {
 						saveRegex(tempSave);
 					} catch (IOException e) {
-						MessageBox dialog = new MessageBox(shlRegexChecker, SWT.ICON_ERROR | SWT.OK);
-			    		dialog.setMessage("Regex gagal disimpan!");
-			    		dialog.open();
+			    		dialogGagal.setMessage("Regex gagal disimpan!");
+			    		dialogGagal.open();
+			    		displayHistory.setUrl(history);
+					} catch (NullPointerException es) {
+						dialogGagal.setMessage("Nama  Regex tidak Boleh Kosong");
+			    		dialogGagal.open();
 			    		displayHistory.setUrl(history);
 					}
-		    		MessageBox dialog = new MessageBox(shlRegexChecker, SWT.ICON_INFORMATION | SWT.OK);
-		    		dialog.setMessage("Regex berhasil disimpan");
-		    		dialog.open();
-		    		displayHistory.setUrl(history);
-		    	} else {
-		    		MessageBox dialog = new MessageBox(shlRegexChecker, SWT.ICON_ERROR | SWT.OK);
-		    		dialog.setMessage("Nama regex dan regex tidak boleh kosong");
-		    		dialog.open();
+		    		dialogSukses.setMessage("Regex berhasil disimpan");
+		    		dialogSukses.open();
 		    		displayHistory.setUrl(history);
 		    	}
 		    }
 		});
 		
-		result = new Text(shlRegexChecker, SWT.BORDER);
-		result.setBounds(10, 207, 438, 93);
-		result.setMessage("Your result will be displayed here");
-		
-		//REGEX CHECKER START
-		TimerTask autoUpdate = new TimerTask() {
+		//AUTO CHECK REGEX
+		autoUpdate = new TimerTask() {
 			public void run() {
 				Display.getDefault().syncExec(new Runnable() {
 					@Override
 					public void run() {
-						try {
-							String[] tempArray = textAreaInput.getText().split(delimiter);
-							String trueString = "";
-								try {
-									for (int i = 0; i < tempArray.length; i++) {
-										// TODO Auto-generated method stub
-										String regexUser = regexInput.getText();
-										if(tempArray[i].matches(regexUser)) {
-											trueString = trueString + " " + tempArray[i];
-										}else {
+						if(inputRegex.getText().trim().length() > 0) {
+							try {
+								tempArray = textInput.getText().split(delimiter);
+								trueString = "";
+									try {
+										for (int i = 0; i < tempArray.length; i++) {
+											regexUser = inputRegex.getText();
+											if(tempArray[i].matches(regexUser)) {
+												trueString = trueString + " " + tempArray[i];
+											}else {
+											}
 										}
+										resultInput.setText(trueString);
+									}catch(PatternSyntaxException e) {
+										resultInput.setText("Error pattern");
 									}
-									result.setText(trueString);
-								}catch(PatternSyntaxException e) {
-									result.setText("Error pattern");
-								}
-						}catch(SWTException e) {
-							result.setText("Error");
+							}catch(SWTException e) {
+								resultInput.setText("Error");
+							}
 						}
 					}
 				});
 			}
 		};
-		Timer mytimer =  new Timer("Timer");
-		long delay = 50L;
-		long period = 50L;
+		delay = 50L;
+		period = 50L;
 		mytimer.schedule(autoUpdate, delay, period);
-
 	}
 	
-	public static void saveRegex(String tempSave) throws IOException {
-		
-		/*FileInputStream in = null;
-		FileOutputStream out = null;
-		
-		 StringBuilder sb = new StringBuilder(512);
-		    try {
-		    	out = new FileOutputStream("saved.txt");
-				FileInputStream r = new FileInputStream("saved.txt");
-		        int c = 0;
-		        while ((c = r.read()) != -1) {
-		            sb.append((char) c);
-		        }
-		        String tempSavedBefore = sb.toString();
-		        String a = tempSavedBefore + tempSave;
-		        byte[] b = a.getBytes();
-		        out.write(b);
-		        System.out.println(sb.toString());
-		    } catch (IOException e) {
-		        throw new RuntimeException(e);
-		    }*/
-		
-		FileInputStream in = null;
-		BufferedWriter out = null;
-		
-		 BufferedReader br = new BufferedReader(new FileReader("saved.txt"));
-		    try {
-		        StringBuilder sb = new StringBuilder();
-		        String line = br.readLine();
-		        FileOutputStream w = new FileOutputStream("saved.txt");
-		        while (line != null) {
-		            sb.append(line);
-		            sb.append("\n");
-		            line = br.readLine();
-		        }
-		        String newSave = tempSave+"\n"+sb;
-		        byte[] finalSave = newSave.getBytes();
-		        w.write(finalSave);
-		    } finally {
-		        br.close();
-		    }
+	
+	//DAPAT STRING SAVE REGEX
+	public String getText(String namaregex, String inputregex) {
+		dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");  
+		now = LocalDateTime.now();  
+		return "["+dtf.format(now)+"] \n Nama Regex: "+namaregex+"\n Regex: "+inputregex+"\n"+"====================";
+	}
+	
+	
+	//INPUT OUTPUT KE TXT
+	public static void saveRegex(String tempSave) throws IOException {	
+		BufferedReader br = new BufferedReader(new FileReader("saved.txt"));
+		try {
+			
+			StringBuilder sb = new StringBuilder();
+			String line = br.readLine();
+			output = new FileOutputStream("saved.txt");
+			
+			while (line != null) {
+				sb.append(line);
+				sb.append("\n");
+				line = br.readLine();
+			}
+			
+			String newSave = tempSave+"\n"+sb;
+			byte[] finalSave = newSave.getBytes();
+			output.write(finalSave);
+		} finally {
+			br.close();
+		}
 		
 	}
 }
