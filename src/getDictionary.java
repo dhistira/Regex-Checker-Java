@@ -1,9 +1,14 @@
 public class getDictionary {
 	
-	//DAPAT TABEL DICTIONARY
-		public static String getDictionary(int opt) {
+		private static int dicId;
+
+		public void setType(int opt) {
+			dicId = opt;
+		}
+		
+		public String getDictionary() {
 			String dictionaries = null;
-			if(opt == 1) {
+			if(dicId == 1) {
 				dictionaries = "<table>"
 						+ "<tr><td style='width:100px;' valign='top'><b>[abc]</b></td><td>matches <b>a</b> or <b>b</b>, or <b>c</b></td></tr>"
 						+ "<tr><td valign='top'><b>^[abc]</b></td><td>Negation, matches everything except <b>a</b> or <b>b</b>, or <b>c</b></td></tr>"
@@ -12,7 +17,7 @@ public class getDictionary {
 						+ "<tr><td valign='top'><b>[a-c&&[b-c]]</b></td><td>intersection, matches <b>b</b> or <b>c</b></td></tr>"
 						+ "<tr><td valign='top'><b>[a-c&&[^b-c]]</b></td><td>subtraction, matches <b>a</b></td></tr>"
 						+ "</table>";
-			}else if(opt == 2) {
+			}else if(dicId == 2) {
 				dictionaries = "<table>"
 						+ "<tr><td style ='width:100px;' valign='top'><b>.</b></td><td>Any character.</td></tr>"
 						+ "<tr><td valign='top'><b>\\d</b></td><td>A digit [0-9]</td></tr>"
@@ -22,7 +27,7 @@ public class getDictionary {
 						+ "<tr><td valign='top'><b>\\w</b></td><td>A word character: [a-zA-Z_0-9]</td></tr>"
 						+ "<tr><td valign='top'><b>\\W</b></td><td>A non-word character: [^\\w]</td></tr>"
 						+ "</table>";
-			}else if(opt == 3) {
+			}else if(dicId == 3) {
 				dictionaries = "<table><tr><td style ='width:100px;' valign='top'><b>^</b></td><td>A beginning of a line.</td></tr>"
 						+ "<tr><td valign='top'><b>$</b></td><td>The end of life</td></tr>"
 						+ "<tr><td valign='top'><b>\\b</b></td><td>A word boundary</td></tr>"

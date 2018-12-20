@@ -54,7 +54,7 @@ public class main {
 	public main() {
 		
 		//CORE
-		shlRegexChecker = new Shell();
+		shlRegexChecker = new Shell(SWT.TITLE | SWT.CLOSE | SWT.BORDER);
 		displayHistory = new Browser(shlRegexChecker, SWT.NONE);
 		inputRegex = new Text(shlRegexChecker, SWT.BORDER);
 		textInput = new Text(shlRegexChecker, SWT.BORDER);
@@ -129,12 +129,15 @@ public class main {
 		getDictionary getDictionary = new getDictionary();
 		CharacterTab.setText("Character");
 		CharacterTab.setControl(Tab1);
-		Tab1.setText(getDictionary.getDictionary(1));
+		getDictionary.setType(1);
+		Tab1.setText(getDictionary.getDictionary());
 		PredefinedTab.setText("Predefined");
-		Tab2.setText(getDictionary.getDictionary(2));
+		getDictionary.setType(2);
+		Tab2.setText(getDictionary.getDictionary());
 		PredefinedTab.setControl(Tab2);
 		BoundaryTab.setText("Boundary");
-		Tab3.setText(getDictionary.getDictionary(3));
+		getDictionary.setType(3);
+		Tab3.setText(getDictionary.getDictionary());
 		BoundaryTab.setControl(Tab3);
 		
 		lblSource.setBounds(10, 550, 625, 21);
