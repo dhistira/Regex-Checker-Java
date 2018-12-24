@@ -1,8 +1,8 @@
 # REGEX CHECKER with JAVA
 > Regex Checker Written in Java
 
-[![java-image]]
-[![travis-image]]
+[!java-image]
+[!travis-image]
 
 For my semester project. Making a regex checker like regex101.com written in Java
 
