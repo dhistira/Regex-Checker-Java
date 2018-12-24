@@ -21,4 +21,4 @@ Import this to your workspace/project, add external library and install all reco
 
 <!-- Markdown link & img dfn's -->
 [java-image]: https://img.shields.io/badge/Java%20Version-1.8.0-brightgreen.svg
-[travis-image]:	https://img.shields.io/appveyor/ci/gruntjs/grunt.svgi
+[travis-image]:	https://img.shields.io/appveyor/ci/gruntjs/grunt.svg
