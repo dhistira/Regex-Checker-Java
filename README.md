@@ -2,7 +2,7 @@
 > Regex Checker Written in Java
 
 [![Java Version][java-image]]
-[![Build Status][travis-image]]
+[travis-image]
 
 For my semester project. Making a regex checker like regex101.com written in Java
 
